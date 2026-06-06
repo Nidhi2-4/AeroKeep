@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;family=Fira+Code:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary-fixed-dim": "#4cd7f6",
+            "surface-container": "#201f20",
+            "on-surface": "#e5e2e2",
+            "tertiary-container": "#000c10",
+            "surface-variant": "#353435",
+            "inverse-primary": "#5c5e6a",
+            "outline": "#919096",
+            "on-tertiary": "#003640",
+            "inverse-on-surface": "#313031",
+            "surface-container-low": "#1c1b1c",
+            "on-secondary": "#2b3040",
+            "on-secondary-container": "#b3b7cc",
+            "error": "#ffb4ab",
+            "surface-container-lowest": "#0e0e0f",
+            "on-surface-variant": "#c7c6cc",
+            "on-primary-container": "#777886",
+            "on-tertiary-container": "#00859c",
+            "secondary-fixed-dim": "#c1c6db",
+            "outline-variant": "#46464c",
+            "error-container": "#93000a",
+            "tertiary": "#4cd7f6",
+            "on-primary-fixed": "#191b26",
+            "inverse-surface": "#e5e2e2",
+            "surface-container-high": "#2a2a2b",
+            "primary": "#c5c5d4",
+            "surface-container-highest": "#353435",
+            "surface-bright": "#3a393a",
+            "surface-dim": "#131314",
+            "on-secondary-fixed": "#161b2a",
+            "on-primary-fixed-variant": "#444652",
+            "surface": "#131314",
+            "on-secondary-fixed-variant": "#414657",
+            "primary-fixed": "#e1e1f1",
+            "on-error": "#690005",
+            "on-tertiary-fixed": "#001f26",
+            "secondary-fixed": "#dee1f7",
+            "surface-tint": "#c5c5d4",
+            "on-error-container": "#ffdad6",
+            "primary-fixed-dim": "#c5c5d4",
+            "primary-container": "#070913",
+            "secondary": "#c1c6db",
+            "background": "#131314",
+            "on-background": "#e5e2e2",
+            "tertiary-fixed": "#acedff",
+            "on-primary": "#2e303b",
+            "on-tertiary-fixed-variant": "#004e5c",
+            "secondary-container": "#44485a",
+            "status-danger": "#ef4444"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "base": "4px",
+            "xs": "4px",
+            "md": "16px",
+            "xl": "40px",
+            "gutter": "16px",
+            "margin-desktop": "32px",
+            "sm": "8px",
+            "margin-mobile": "16px",
+            "lg": "24px"
+          },
+          "fontFamily": {
+            "label-sm": ["JetBrains Mono"],
+            "headline-lg": ["Outfit"],
+            "body-base": ["Outfit"],
+            "title-md": ["Outfit"],
+            "display-lg": ["Outfit"],
+            "data-mono": ["JetBrains Mono"],
+            "fira": ["Fira Code"]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .glass-panel {
+      backdrop-filter: blur(20px);
+      background: rgba(28, 27, 28, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .drifting-lines {
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .danger-glow {
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+      border-top: 2px solid #ef4444;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-base min-h-screen relative overflow-hidden">
+<!-- Background Grid Scaffold -->
+<div class="fixed inset-0 drifting-lines pointer-events-none opacity-20"></div>
+<!-- Main UI Layout Shell -->
+<div class="flex h-screen w-full relative z-10">
+<!-- Sidebar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-screen flex flex-col pt-xl bg-surface-container-lowest/10 backdrop-blur-2xl border-r border-white/5 w-64">
+<div class="px-lg mb-xl">
+<div class="text-headline-lg font-headline-lg text-tertiary">AeroKeep</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant opacity-60">Fleet Precision</div>
+</div>
+<nav class="flex-1 px-md space-y-base">
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm">Dashboard</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-tertiary border-r-2 border-tertiary bg-tertiary/10 scale-[0.98] transition-transform cursor-pointer">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-sm font-label-sm">Inventory</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="text-label-sm font-label-sm">Logs</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="text-label-sm font-label-sm">Categories</span>
+</div>
+<div class="flex items-center gap-md px-md py-sm text-on-surface-variant hover:text-primary-fixed-dim hover:bg-white/5 transition-all cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-label-sm font-label-sm">Settings</span>
+</div>
+</nav>
+<div class="p-lg">
+<button class="w-full py-sm bg-tertiary text-on-tertiary font-bold text-label-sm flex items-center justify-center gap-xs rounded-lg">
+          Quick Scan
+        </button>
+</div>
+</aside>
+<!-- Content Canvas (Mockup Inventory Background) -->
+<main class="ml-64 flex-1 p-xl">
+<header class="flex justify-between items-center mb-xl">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface">Asset Management</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Fleet / Heavy Lift Drones</p>
+</div>
+<div class="flex items-center gap-lg">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-lg opacity-40">
+<div class="col-span-8 space-y-lg">
+<div class="glass-panel p-lg rounded-xl">
+<div class="flex justify-between items-end mb-lg">
+<h2 class="text-title-md font-title-md">Telemetry Monitor</h2>
+<span class="text-data-mono font-data-mono text-tertiary">SYSTEM_READY</span>
+</div>
+<div class="h-48 w-full bg-surface-variant/20 rounded flex items-center justify-center border border-white/5">
+<span class="text-label-sm font-label-sm opacity-20">DATA_VISUALIZATION_PLACEHOLDER</span>
+</div>
+</div>
+<div class="glass-panel p-lg rounded-xl h-64 border-t-2 border-tertiary/40">
+<div class="flex items-center gap-md mb-md">
+<span class="material-symbols-outlined text-tertiary" data-icon="location_on">location_on</span>
+<span class="text-title-md font-title-md">Live Fleet Locations</span>
+</div>
+<img class="w-full h-full object-cover rounded grayscale opacity-50" data-alt="A sophisticated digital map overlay showing a futuristic metropolitan grid with glowing cyan telemetry data and drone flight paths. The visualization is rendered in a high-contrast aerospace HUD style, featuring translucent layers, drifting data points, and a deep charcoal background that emphasizes a professional drone fleet operations environment." data-location="San Francisco" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKm31JQLslqF-le-uGBlTICBoo1FuEYmhch-PbKO0LmlzGzCOHRkBhzUjB8So0XgtNRI1g1yKwGokj2iwufGx5bPglqzhyKXqZ2fbW3Gukc-CMeO-kRN_hfA5gtFqVTXY8QLxJxAWEf4iC0vbJslJFQ3Om4FzbylMRYIesXC4qx6e9_gjifR-uWSsywLaaouQ3A5puXnfjHF30UedhM-8vFZ4azQTIY2zBEPGa_ag8EbD-prxDJyb1CumobjMUjLdxAMCsYhO9__fh"/>
+</div>
+</div>
+<div class="col-span-4 space-y-lg">
+<div class="glass-panel p-lg rounded-xl border-t-2 border-status-danger/40">
+<div class="flex items-center gap-md mb-md text-status-danger">
+<span class="material-symbols-outlined" data-icon="report">report</span>
+<span class="text-title-md font-title-md">Critical Alerts</span>
+</div>
+<div class="p-sm bg-status-danger/10 text-status-danger border border-status-danger/20 rounded text-label-sm font-label-sm">
+                X-104 BATTERY_DEGRADATION
+             </div>
+</div>
+</div>
+</div>
+</main>
+<!-- MODAL OVERLAY -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md">
+<!-- CONFIRMATION MODAL -->
+<div class="glass-panel danger-glow w-full max-w-md rounded-xl p-xl flex flex-col items-center text-center relative overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Atmospheric Glow Effect -->
+<div class="absolute -top-24 -left-24 w-48 h-48 bg-status-danger/10 blur-[100px] rounded-full"></div>
+<!-- Warning Icon -->
+<div class="w-16 h-16 rounded-full bg-status-danger/10 border border-status-danger/20 flex items-center justify-center mb-lg">
+<span class="material-symbols-outlined text-status-danger text-[40px]" data-icon="warning">warning</span>
+</div>
+<!-- Warning Typography -->
+<h2 class="text-headline-lg font-headline-lg text-on-surface mb-sm">Delete Asset?</h2>
+<p class="text-label-sm font-label-sm text-status-danger tracking-widest mb-lg">
+          THIS ACTION CANNOT BE UNDONE
+        </p>
+<!-- Product Name to be Deleted -->
+<div class="w-full p-md bg-surface-container-highest/30 rounded border border-white/5 mb-xl">
+<p class="text-on-surface-variant text-label-sm font-label-sm mb-xs">TARGET_UID</p>
+<code class="font-fira text-title-md text-on-surface font-semibold">AK-X7_STRATOS_MK4</code>
+</div>
+<p class="text-body-base font-body-base text-on-surface-variant mb-xl max-w-[280px]">
+          All telemetry logs and maintenance history for this drone will be permanently purged from the 
+          <span class="text-tertiary">AeroKeep</span> mainframe.
+        </p>
+<!-- CTA Buttons -->
+<div class="flex w-full gap-md">
+<button class="flex-1 py-md border border-white/10 hover:bg-white/5 text-on-surface font-label-sm rounded-lg transition-all group">
+<span class="opacity-60 group-hover:opacity-100">Cancel</span>
+</button>
+<button class="flex-1 py-md bg-gradient-to-br from-status-danger to-[#93000a] text-white font-label-sm font-bold rounded-lg shadow-lg hover:brightness-110 active:scale-95 transition-all">
+            Delete Asset
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- UI Sound/Interaction Logic -->
+<script>
+    // Micro-interaction: Subtle drifting animation for background grid
+    document.addEventListener('mousemove', (e) => {
+      const moveX = (e.clientX / window.innerWidth) * 10;
+      const moveY = (e.clientY / window.innerHeight) * 10;
+      document.querySelector('.drifting-lines').style.transform = `translate(${moveX}px, ${moveY}px)`;
+    });
+
+    // Close interaction (Mockup)
+    document.querySelector('button.border-white\\/10').addEventListener('click', () => {
+      document.querySelector('.fixed.inset-0.z-\\[100\\]').classList.add('hidden');
+    });
+  </script>
+</body></html>

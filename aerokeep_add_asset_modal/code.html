@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AeroKeep | Add New Asset</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#4cd7f6",
+                        "surface-container": "#201f20",
+                        "on-surface": "#e5e2e2",
+                        "tertiary-container": "#000c10",
+                        "surface-variant": "#353435",
+                        "inverse-primary": "#5c5e6a",
+                        "outline": "#919096",
+                        "on-tertiary": "#003640",
+                        "inverse-on-surface": "#313031",
+                        "surface-container-low": "#1c1b1c",
+                        "on-secondary": "#2b3040",
+                        "on-secondary-container": "#b3b7cc",
+                        "error": "#ffb4ab",
+                        "surface-container-lowest": "#0e0e0f",
+                        "on-surface-variant": "#c7c6cc",
+                        "on-primary-container": "#777886",
+                        "on-tertiary-container": "#00859c",
+                        "secondary-fixed-dim": "#c1c6db",
+                        "outline-variant": "#46464c",
+                        "error-container": "#93000a",
+                        "tertiary": "#4cd7f6",
+                        "on-primary-fixed": "#191b26",
+                        "inverse-surface": "#e5e2e2",
+                        "surface-container-high": "#2a2a2b",
+                        "primary": "#c5c5d4",
+                        "surface-container-highest": "#353435",
+                        "surface-bright": "#3a393a",
+                        "surface-dim": "#131314",
+                        "on-secondary-fixed": "#161b2a",
+                        "on-primary-fixed-variant": "#444652",
+                        "surface": "#131314",
+                        "on-secondary-fixed-variant": "#414657",
+                        "primary-fixed": "#e1e1f1",
+                        "on-error": "#690005",
+                        "on-tertiary-fixed": "#001f26",
+                        "secondary-fixed": "#dee1f7",
+                        "surface-tint": "#c5c5d4",
+                        "on-error-container": "#ffdad6",
+                        "primary-fixed-dim": "#c5c5d4",
+                        "primary-container": "#070913",
+                        "secondary": "#c1c6db",
+                        "background": "#131314",
+                        "on-background": "#e5e2e2",
+                        "tertiary-fixed": "#acedff",
+                        "on-primary": "#2e303b",
+                        "on-tertiary-fixed-variant": "#004e5c",
+                        "secondary-container": "#44485a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "base": "4px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "xl": "40px",
+                        "gutter": "16px",
+                        "margin-desktop": "32px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["JetBrains Mono"],
+                        "headline-lg": ["Outfit"],
+                        "body-base": ["Outfit"],
+                        "title-md": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "data-mono": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "title-md": ["20px", {"lineHeight": "28px", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "data-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #0e0e0f;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(76, 215, 246, 0.05) 0%, transparent 50%),
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+        .glass-panel {
+            background: rgba(14, 19, 34, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .cyan-glow {
+            box-shadow: 0 0 15px rgba(76, 215, 246, 0.4);
+        }
+        .btn-primary-gradient {
+            background: linear-gradient(135deg, #4cd7f6 0%, #00859c 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-primary-gradient:hover {
+            box-shadow: 0 0 20px rgba(76, 215, 246, 0.6);
+            transform: translateY(-1px);
+        }
+        .input-recessed {
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-bottom: 2px solid rgba(76, 215, 246, 0.2);
+            transition: border-color 0.3s ease;
+        }
+        .input-recessed:focus {
+            outline: none;
+            border-bottom-color: #4cd7f6;
+            box-shadow: 0 4px 12px -4px rgba(76, 215, 246, 0.3);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-md">
+<!-- Mock Background Page -->
+<div class="fixed inset-0 z-0 opacity-20 pointer-events-none p-xl">
+<div class="grid grid-cols-12 gap-lg h-full">
+<div class="col-span-3 h-64 glass-panel rounded-xl"></div>
+<div class="col-span-6 h-64 glass-panel rounded-xl"></div>
+<div class="col-span-3 h-64 glass-panel rounded-xl"></div>
+<div class="col-span-12 h-full glass-panel rounded-xl mt-lg"></div>
+</div>
+</div>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-background/60 backdrop-blur-sm z-40 flex items-center justify-center p-gutter" id="modalOverlay">
+<!-- Modal Container -->
+<div class="glass-panel w-full max-w-2xl rounded-xl overflow-hidden relative animate-in fade-in zoom-in duration-300">
+<!-- Top Glow Strip -->
+<div class="absolute top-0 left-0 right-0 h-[2px] bg-tertiary cyan-glow"></div>
+<!-- Header -->
+<header class="p-lg flex justify-between items-center border-b border-white/5">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary">add_box</span>
+                        Add New Asset
+                    </h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant tracking-wider">AeroKeep Inventory Management System</p>
+</div>
+<button class="text-on-surface-variant hover:text-tertiary transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<!-- Form Content -->
+<form class="p-lg" id="assetForm">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-x-lg gap-y-md">
+<!-- Asset Name -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">Asset Name</label>
+<input class="input-recessed text-body-base font-body-base text-on-surface p-sm rounded-t-lg" placeholder="e.g. Flight Module X-1" type="text"/>
+</div>
+<!-- SKU -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">SKU Identification</label>
+<input class="input-recessed text-data-mono font-data-mono text-tertiary-fixed-dim p-sm rounded-t-lg" placeholder="SKU-8829-AQ" type="text"/>
+</div>
+<!-- Category -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">Category</label>
+<div class="relative">
+<select class="w-full input-recessed text-body-base font-body-base text-on-surface p-sm rounded-t-lg appearance-none cursor-pointer">
+<option>Propulsion Systems</option>
+<option>Avionics &amp; Sensors</option>
+<option>Frame Components</option>
+<option>Power Modules</option>
+<option>Ground Control</option>
+</select>
+<span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Price -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">Unit Price</label>
+<div class="relative">
+<span class="absolute left-sm top-1/2 -translate-y-1/2 text-tertiary font-label-sm">₹</span>
+<input class="w-full input-recessed text-data-mono font-data-mono text-on-surface p-sm pl-xl rounded-t-lg" placeholder="0.00" type="number"/>
+</div>
+</div>
+<!-- Quantity -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">Initial Stock</label>
+<div class="flex items-center glass-panel rounded-lg overflow-hidden border-white/5 bg-black/20">
+<button class="p-sm text-on-surface-variant hover:text-tertiary transition-colors" type="button"><span class="material-symbols-outlined">remove</span></button>
+<input class="bg-transparent border-none text-center w-full text-data-mono font-data-mono text-on-surface focus:ring-0" type="number" value="0"/>
+<button class="p-sm text-on-surface-variant hover:text-tertiary transition-colors" type="button"><span class="material-symbols-outlined">add</span></button>
+</div>
+</div>
+<!-- Low Stock Threshold -->
+<div class="flex flex-col gap-xs">
+<label class="text-label-sm font-label-sm text-tertiary uppercase tracking-widest">Warning Threshold</label>
+<input class="input-recessed text-data-mono font-data-mono text-on-surface p-sm rounded-t-lg" placeholder="5" type="number"/>
+</div>
+</div>
+<!-- Technical Footer Information -->
+<div class="mt-xl p-sm bg-tertiary/5 rounded-lg border border-tertiary/10 flex items-start gap-sm">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-[18px]">info</span>
+<p class="text-label-sm font-label-sm text-on-tertiary-container/80 leading-relaxed">
+                        Data entry will be logged under operator <span class="text-tertiary">#FLEET-ADMIN</span>. Ensure all SKU codes follow the Aerokeep Standard Protocol for fleet-wide telemetry sync.
+                    </p>
+</div>
+</form>
+<!-- Actions -->
+<footer class="p-lg bg-black/20 flex flex-col md:flex-row gap-md md:justify-end border-t border-white/5">
+<button class="px-lg py-sm text-on-surface font-title-md hover:bg-white/5 rounded transition-all flex items-center justify-center gap-xs" onclick="closeModal()">
+                    Cancel
+                </button>
+<button class="btn-primary-gradient px-xl py-sm text-surface font-title-md font-bold rounded flex items-center justify-center gap-sm" onclick="saveAsset()">
+<span class="material-symbols-outlined font-normal text-[20px]">save</span>
+                    Save Asset
+                </button>
+</footer>
+<!-- Background Decorative Scan Line -->
+<div class="absolute left-0 w-full h-[1px] bg-tertiary/20 opacity-0 pointer-events-none" id="scanLine"></div>
+</div>
+</div>
+<!-- Interactive Layer -->
+<script>
+        function closeModal() {
+            const modal = document.querySelector('#modalOverlay');
+            modal.style.opacity = '0';
+            modal.style.transition = 'opacity 0.2s ease-out';
+            setTimeout(() => {
+                alert('Modal Close Triggered');
+            }, 200);
+        }
+
+        function saveAsset() {
+            const btn = event.currentTarget;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Processing...';
+            btn.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Asset Saved';
+                btn.classList.remove('btn-primary-gradient');
+                btn.style.backgroundColor = '#4cd7f6';
+                
+                // Technical effect: flash the screen briefly
+                const flash = document.createElement('div');
+                flash.className = 'fixed inset-0 bg-tertiary/10 z-[60] pointer-events-none transition-opacity duration-300';
+                document.body.appendChild(flash);
+                setTimeout(() => flash.remove(), 300);
+            }, 1000);
+        }
+
+        // Animated Scanline Effect
+        function runScanline() {
+            const line = document.getElementById('scanLine');
+            line.style.top = '0px';
+            line.style.opacity = '1';
+            
+            const duration = 2000;
+            const start = performance.now();
+            const height = document.querySelector('.glass-panel').offsetHeight;
+
+            function animate(time) {
+                let progress = (time - start) / duration;
+                if (progress > 1) {
+                    line.style.opacity = '0';
+                    setTimeout(runScanline, 3000);
+                    return;
+                }
+                line.style.top = (progress * height) + 'px';
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+        }
+
+        window.onload = () => {
+            setTimeout(runScanline, 1000);
+        };
+    </script>
+</body></html>
