@@ -8,8 +8,8 @@
 ---
 
 ## 🌐 Live Demo
-> **Frontend:** [your-vercel-url-here]
-> **Backend API:** [your-render-url-here]
+> **Link Here:** [your-vercel-url-here]
+
 
 ---
 
