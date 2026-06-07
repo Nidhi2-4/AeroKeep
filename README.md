@@ -2,7 +2,7 @@
 ### Inventory Management System
 > Built for BeRAM Drones — A defense-tech startup developing AI-powered UAVs
 
-![AeroKeep Dashboard](https://img.shields.io/badge/AeroKeep-Deep%20Orbit-06b6d4?style=for-the-badge)
+![AeroKeep Dashboard](https://img.shields.io/badge/AeroKeep-06b6d4?style=for-the-badge)
 ![Stack](https://img.shields.io/badge/Stack-React%20%2B%20Node%20%2B%20PostgreSQL-3b82f6?style=for-the-badge)
 
 ---
