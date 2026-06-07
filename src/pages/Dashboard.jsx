@@ -1,1 +1,155 @@
-export default function Dashboard() { return <div className='text-white p-8'>Dashboard</div> }
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import { api } from '../utils/api'
+
+const MOCK_STATS = {
+  totalProducts: 24,
+  totalValue: 847500,
+  lowStockCount: 3,
+  categoryCount: 5
+}
+
+const MOCK_MOVEMENTS = [
+  { id: 1, createdAt: '2026-06-07T08:30:00Z', product: { name: 'BMS LiPo Pack', sku: 'PWR-BMS-001' }, type: 'OUT', quantity: 5, reason: 'Allocated for UAV Assembly', user: { name: 'Raj Mehta' } },
+  { id: 2, createdAt: '2026-06-07T07:15:00Z', product: { name: 'Flight Controller X7', sku: 'AVI-FC-007' }, type: 'IN', quantity: 10, reason: 'Shipment Received', user: { name: 'Priya Shah' } },
+  { id: 3, createdAt: '2026-06-06T16:45:00Z', product: { name: 'GPS Module NEO-9', sku: 'AVI-GPS-009' }, type: 'OUT', quantity: 2, reason: 'Damaged during flight testing', user: { name: 'Arjun Nair' } },
+  { id: 4, createdAt: '2026-06-06T14:20:00Z', product: { name: 'ESC 40A Pro', sku: 'PWR-ESC-040' }, type: 'IN', quantity: 20, reason: 'Restocked from supplier', user: { name: 'Raj Mehta' } },
+  { id: 5, createdAt: '2026-06-06T11:00:00Z', product: { name: 'Carbon Frame X500', sku: 'STR-CF-500' }, type: 'OUT', quantity: 1, reason: 'Allocated for UAV Assembly', user: { name: 'Priya Shah' } },
+]
+
+const MOCK_LOW_STOCK = [
+  { name: 'GPS Module NEO-9', sku: 'AVI-GPS-009' },
+  { name: 'BMS LiPo Pack', sku: 'PWR-BMS-001' },
+  { name: 'Telemetry Radio 915MHz', sku: 'COM-TLM-915' },
+]
+
+export default function Dashboard() {
+  const [stats, setStats] = useState(MOCK_STATS)
+  const [movements, setMovements] = useState(MOCK_MOVEMENTS)
+  const [lowStock, setLowStock] = useState(MOCK_LOW_STOCK)
+  const [loading, setLoading] = useState(false)
+
+  // Uncomment when backend is ready:
+  // useEffect(() => { fetchData() }, [])
+  // const fetchData = async () => { ... }
+
+  const formatCurrency = (val) =>
+    '₹' + val.toLocaleString('en-IN')
+
+  const formatTime = (iso) => {
+    const d = new Date(iso)
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) +
+      ' · ' + d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+  }
+
+  const cards = [
+    { label: 'TOTAL PRODUCTS', value: stats.totalProducts, icon: 'inventory_2', color: 'text-tertiary', border: 'glow-border', valueColor: 'text-tertiary' },
+    { label: 'STOCK VALUE', value: formatCurrency(stats.totalValue), icon: 'payments', color: 'text-green-400', border: 'glow-border-green', valueColor: 'text-green-400' },
+    { label: 'LOW STOCK ALERTS', value: stats.lowStockCount, icon: 'warning', color: 'text-amber-400', border: 'glow-border-amber', valueColor: 'text-amber-400', pulse: true },
+    { label: 'CATEGORIES', value: stats.categoryCount, icon: 'category', color: 'text-blue-400', border: 'glow-border', valueColor: 'text-blue-400' },
+  ]
+
+  return (
+    <div>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="font-headline-lg text-[28px] text-on-surface">Mission Control</h1>
+        <p className="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest mt-1">
+          AeroKeep · Live Inventory Overview
+        </p>
+      </div>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        {cards.map((card) => (
+          <div key={card.label} className={`glass-panel ${card.border} p-6 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:border-tertiary/30`}>
+            <div className="flex items-start justify-between">
+              <span className={`material-symbols-outlined text-[28px] ${card.color} ${card.pulse ? 'animate-pulse' : ''}`}>
+                {card.icon}
+              </span>
+            </div>
+            <p className={`font-data-mono text-[30px] font-bold mt-3 ${card.valueColor}`}>
+              {card.value}
+            </p>
+            <p className="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest mt-1">
+              {card.label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Low Stock Alert Banner */}
+      {lowStock.length > 0 && (
+        <div className="mb-6 p-4 bg-amber-400/5 border border-amber-400/20 rounded-xl border-l-4 border-l-amber-400 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined text-amber-400 animate-pulse text-[20px]">warning</span>
+            <div>
+              <p className="font-body-base text-[13px] text-on-surface">
+                <span className="text-amber-400 font-semibold">{lowStock.length} components</span> are critically low — immediate restocking required
+              </p>
+              <p className="font-data-mono text-[11px] text-on-surface-variant mt-0.5">
+                {lowStock.map(p => p.sku).join(' · ')}
+              </p>
+            </div>
+          </div>
+          <Link to="/inventory?filter=low" className="font-label-sm text-[11px] text-amber-400 hover:text-amber-300 uppercase tracking-wider whitespace-nowrap ml-4">
+            View Alerts →
+          </Link>
+        </div>
+      )}
+
+      {/* Recent Activity */}
+      <div className="glass-panel rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-outline-variant/20">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-tertiary text-[20px]">receipt_long</span>
+            <h2 className="font-title-md text-[16px] text-on-surface font-semibold">Recent Activity</h2>
+          </div>
+          <Link to="/logs" className="font-label-sm text-[11px] text-tertiary hover:text-tertiary-fixed uppercase tracking-wider">
+            View All →
+          </Link>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-outline-variant/10">
+                {['Timestamp', 'Product', 'SKU', 'Type', 'Qty', 'Reason', 'Engineer'].map(h => (
+                  <th key={h} className="px-5 py-3 text-left font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {movements.map((m, i) => (
+                <tr key={m.id} className="border-b border-white/[0.03] hover:bg-tertiary/[0.03] transition-colors">
+                  <td className="px-5 py-3 font-data-mono text-[12px] text-on-surface-variant whitespace-nowrap">
+                    {formatTime(m.createdAt)}
+                  </td>
+                  <td className="px-5 py-3 font-body-base text-[13px] text-on-surface">{m.product.name}</td>
+                  <td className="px-5 py-3 font-data-mono text-[12px] text-on-surface-variant">{m.product.sku}</td>
+                  <td className="px-5 py-3">
+                    <span className={`font-label-sm text-[11px] px-2 py-1 rounded-full uppercase font-bold
+                      ${m.type === 'IN'
+                        ? 'bg-green-400/10 text-green-400 border border-green-400/20'
+                        : 'bg-red-400/10 text-red-400 border border-red-400/20'}`}>
+                      {m.type === 'IN' ? '↑ IN' : '↓ OUT'}
+                    </span>
+                  </td>
+                  <td className={`px-5 py-3 font-data-mono text-[13px] font-bold ${m.type === 'IN' ? 'text-green-400' : 'text-red-400'}`}>
+                    {m.type === 'IN' ? '+' : '-'}{m.quantity}
+                  </td>
+                  <td className="px-5 py-3 font-body-base text-[13px] text-on-surface-variant max-w-[180px] truncate">
+                    {m.reason}
+                  </td>
+                  <td className="px-5 py-3 font-body-base text-[13px] text-on-surface-variant">{m.user.name}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
