@@ -13,19 +13,21 @@ export default function Login() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-    try {
-      const data = await api.post('/auth/login', { email, password })
-      login(data.token, data.user)
-      navigate('/')
-    } catch (err) {
-      setError(err.message || 'Authentication failed')
-    } finally {
-      setLoading(false)
-    }
+  e.preventDefault()
+  setLoading(true)
+  setError('')
+  try {
+    // TEMPORARY - remove this when backend is ready
+    const fakeToken = 'temp_token_123'
+    const fakeUser = { name: 'Test Operator', email: email, role: 'engineer' }
+    login(fakeToken, fakeUser)
+    navigate('/')
+  } catch (err) {
+    setError(err.message || 'Authentication failed')
+  } finally {
+    setLoading(false)
   }
+}
 
   return (
     <div className="font-body-base text-on-background flex items-center justify-center min-h-screen relative overflow-hidden bg-background">
@@ -81,7 +83,7 @@ export default function Login() {
             <div className="space-y-1">
               <label className="font-label-sm text-label-sm text-on-surface-variant flex justify-between">
                 <span>OPERATOR ID</span>
-                <span className="text-tertiary/40">SYS_AUTH_01</span>
+                
               </label>
               <div className="relative">
                 <input
@@ -100,7 +102,7 @@ export default function Login() {
             <div className="space-y-1">
               <label className="font-label-sm text-label-sm text-on-surface-variant flex justify-between">
                 <span>ACCESS KEY</span>
-                <span className="text-tertiary/40">ENCRYPTION: AES-256</span>
+                
               </label>
               <div className="relative">
                 <input
@@ -137,7 +139,7 @@ export default function Login() {
                   </>
                 ) : (
                   <>
-                    INITIATE UPLINK
+                    SIGN IN
                     <span className="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                   </>
                 )}

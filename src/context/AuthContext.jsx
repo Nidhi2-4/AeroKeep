@@ -8,18 +8,13 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (token) {
-      fetch(`${import.meta.env.VITE_API_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-        .then(r => r.json())
-        .then(data => { if (data.user) setUser(data.user); else logout() })
-        .catch(() => logout())
-        .finally(() => setLoading(false))
-    } else {
-      setLoading(false)
-    }
-  }, [token])
+  // TEMPORARY - skip API check until backend is ready
+  if (token) {
+    const savedUser = { name: 'Test Operator', email: 'test@beram.aero', role: 'engineer' }
+    setUser(savedUser)
+  }
+  setLoading(false)
+}, [token])
 
   const login = (token, user) => {
     localStorage.setItem('aerokeep_token', token)
