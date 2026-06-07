@@ -2,26 +2,10 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../utils/api'
 
-const MOCK_STATS = {
-  totalProducts: 24,
-  totalValue: 847500,
-  lowStockCount: 3,
-  categoryCount: 5
-}
-
-const MOCK_MOVEMENTS = [
-  { id: 1, createdAt: '2026-06-07T08:30:00Z', product: { name: 'BMS LiPo Pack', sku: 'PWR-BMS-001' }, type: 'OUT', quantity: 5, reason: 'Allocated for UAV Assembly', user: { name: 'Raj Mehta' } },
-  { id: 2, createdAt: '2026-06-07T07:15:00Z', product: { name: 'Flight Controller X7', sku: 'AVI-FC-007' }, type: 'IN', quantity: 10, reason: 'Shipment Received', user: { name: 'Priya Shah' } },
-  { id: 3, createdAt: '2026-06-06T16:45:00Z', product: { name: 'GPS Module NEO-9', sku: 'AVI-GPS-009' }, type: 'OUT', quantity: 2, reason: 'Damaged during flight testing', user: { name: 'Arjun Nair' } },
-  { id: 4, createdAt: '2026-06-06T14:20:00Z', product: { name: 'ESC 40A Pro', sku: 'PWR-ESC-040' }, type: 'IN', quantity: 20, reason: 'Restocked from supplier', user: { name: 'Raj Mehta' } },
-  { id: 5, createdAt: '2026-06-06T11:00:00Z', product: { name: 'Carbon Frame X500', sku: 'STR-CF-500' }, type: 'OUT', quantity: 1, reason: 'Allocated for UAV Assembly', user: { name: 'Priya Shah' } },
-]
-
-const MOCK_LOW_STOCK = [
-  { name: 'GPS Module NEO-9', sku: 'AVI-GPS-009' },
-  { name: 'BMS LiPo Pack', sku: 'PWR-BMS-001' },
-  { name: 'Telemetry Radio 915MHz', sku: 'COM-TLM-915' },
-]
+const [stats, setStats] = useState({ totalProducts: 0, totalValue: 0, lowStockCount: 0, categoryCount: 0 })
+const [movements, setMovements] = useState([])
+const [lowStock, setLowStock] = useState([])
+const [loading, setLoading] = useState(true)
 
 export default function Dashboard() {
   const [stats, setStats] = useState(MOCK_STATS)
@@ -29,9 +13,24 @@ export default function Dashboard() {
   const [lowStock, setLowStock] = useState(MOCK_LOW_STOCK)
   const [loading, setLoading] = useState(false)
 
-  // Uncomment when backend is ready:
-  // useEffect(() => { fetchData() }, [])
-  // const fetchData = async () => { ... }
+  useEffect(() => { fetchData() }, [])
+
+const fetchData = async () => {
+  setLoading(true)
+  try {
+    const [statsData, movementsData] = await Promise.all([
+      api.get('/products/stats'),
+      api.get('/movements')
+    ])
+    setStats(statsData)
+    setMovements(movementsData.slice(0, 5))
+    setLowStock(statsData.lowStockItems || [])
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setLoading(false)
+  }
+}
 
   const formatCurrency = (val) =>
     '₹' + val.toLocaleString('en-IN')
