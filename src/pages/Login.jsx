@@ -13,6 +13,20 @@ export default function Login() {
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+    try {
+      const data = await api.post('/auth/login', { email, password })
+      login(data.token, data.user)
+      navigate('/')
+    } catch (err) {
+      setError(err.message || 'Authentication failed')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   e.preventDefault()
   setLoading(true)
   setError('')
@@ -27,7 +41,6 @@ export default function Login() {
   } finally {
     setLoading(false)
   }
-}
 
   return (
     <div className="font-body-base text-on-background flex items-center justify-center min-h-screen relative overflow-hidden bg-background">
