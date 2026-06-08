@@ -2,35 +2,30 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../utils/api'
 
-const [stats, setStats] = useState({ totalProducts: 0, totalValue: 0, lowStockCount: 0, categoryCount: 0 })
-const [movements, setMovements] = useState([])
-const [lowStock, setLowStock] = useState([])
-const [loading, setLoading] = useState(true)
-
 export default function Dashboard() {
-  const [stats, setStats] = useState(MOCK_STATS)
-  const [movements, setMovements] = useState(MOCK_MOVEMENTS)
-  const [lowStock, setLowStock] = useState(MOCK_LOW_STOCK)
-  const [loading, setLoading] = useState(false)
+  const [stats, setStats] = useState({ totalProducts: 0, totalValue: 0, lowStockCount: 0, categoryCount: 0 })
+  const [movements, setMovements] = useState([])
+  const [lowStock, setLowStock] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => { fetchData() }, [])
 
-const fetchData = async () => {
-  setLoading(true)
-  try {
-    const [statsData, movementsData] = await Promise.all([
-      api.get('/products/stats'),
-      api.get('/movements')
-    ])
-    setStats(statsData)
-    setMovements(movementsData.slice(0, 5))
-    setLowStock(statsData.lowStockItems || [])
-  } catch (err) {
-    console.error(err)
-  } finally {
-    setLoading(false)
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const [statsData, movementsData] = await Promise.all([
+        api.get('/products/stats'),
+        api.get('/movements')
+      ])
+      setStats(statsData)
+      setMovements(movementsData.slice(0, 5))
+      setLowStock(statsData.lowStockItems || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   const formatCurrency = (val) =>
     '₹' + val.toLocaleString('en-IN')
