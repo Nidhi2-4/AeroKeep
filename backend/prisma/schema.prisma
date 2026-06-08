@@ -3,34 +3,43 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  passwordHash  String
-  name          String
-  role          String          @default("engineer")
-  createdAt     DateTime        @default(now())
-  movements     StockMovement[]
+  id           String          @id @default(uuid())
+  email        String          @unique
+  passwordHash String
+  name         String
+  role         String          @default("engineer")
+  createdAt    DateTime        @default(now())
+  movements    StockMovement[]
+  products     Product[]
+  categories   Category[]
 }
 
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  name        String
   description String?
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   products    Product[]
   createdAt   DateTime  @default(now())
+
+  @@unique([userId, name])
 }
 
 model Product {
   id                String          @id @default(uuid())
   name              String
-  sku               String          @unique
+  sku               String
   categoryId        String
   category          Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  userId            String
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   price             Float
   quantity          Int
   lowStockThreshold Int
@@ -39,6 +48,8 @@ model Product {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   movements         StockMovement[]
+
+  @@unique([userId, sku])
 }
 
 model StockMovement {

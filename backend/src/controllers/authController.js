@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const prisma = require('../prisma')
+const { seedUserInventory } = require('../utils/seedUser')
 
 const generateToken = (user) =>
   jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
@@ -13,6 +14,12 @@ exports.register = async (req, res) => {
     if (existing) return res.status(400).json({ message: 'Email already registered' })
     const passwordHash = await bcrypt.hash(password, 10)
     const user = await prisma.user.create({ data: { name, email, passwordHash, role: role || 'engineer' } })
+    // Give the brand-new operator their own private starter inventory.
+    try {
+      await seedUserInventory(user.id)
+    } catch (seedErr) {
+      console.error('Seeding starter inventory failed:', seedErr.message)
+    }
     const token = generateToken(user)
     res.status(201).json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } })
   } catch (err) {

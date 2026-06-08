@@ -3,6 +3,7 @@ const prisma = require('../prisma')
 exports.getAll = async (req, res) => {
   try {
     const movements = await prisma.stockMovement.findMany({
+      where: { userId: req.user.id },
       include: { product: { select: { name: true, sku: true } }, user: { select: { name: true } } },
       orderBy: { createdAt: 'desc' }
     })
@@ -16,7 +17,8 @@ exports.create = async (req, res) => {
     if (!productId || !type || !quantity || !reason)
       return res.status(400).json({ message: 'All fields required' })
     const result = await prisma.$transaction(async (tx) => {
-      const product = await tx.product.findUnique({ where: { id: productId } })
+      // Ownership check: product must belong to the requesting user.
+      const product = await tx.product.findFirst({ where: { id: productId, userId: req.user.id } })
       if (!product) throw new Error('Product not found')
       const newQty = type === 'IN' ? product.quantity + parseInt(quantity) : product.quantity - parseInt(quantity)
       if (newQty < 0) throw new Error('Insufficient stock')

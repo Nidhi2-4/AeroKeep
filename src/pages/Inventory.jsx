@@ -1,17 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../utils/api'
 import { exportToCSV } from '../utils/csvExport'
-
-const MOCK_PRODUCTS = [
-  { id: '1', name: 'Flight Controller X7', sku: 'AVI-FC-007', category: { name: 'Avionics' }, price: 12500, quantity: 15, lowStockThreshold: 5, serialNumber: null, manufacturer: 'Holybro' },
-  { id: '2', name: 'BMS Intelligent LiPo Pack', sku: 'PWR-BMS-001', category: { name: 'Power Systems' }, price: 8900, quantity: 3, lowStockThreshold: 5, serialNumber: null, manufacturer: 'Tattu' },
-  { id: '3', name: 'GPS Module NEO-9', sku: 'AVI-GPS-009', category: { name: 'Avionics' }, price: 4200, quantity: 2, lowStockThreshold: 5, serialNumber: null, manufacturer: 'u-blox' },
-  { id: '4', name: 'ESC 40A Pro', sku: 'PWR-ESC-040', category: { name: 'Power Systems' }, price: 3100, quantity: 28, lowStockThreshold: 10, serialNumber: null, manufacturer: 'BLHeli' },
-  { id: '5', name: 'Carbon Frame X500', sku: 'STR-CF-500', category: { name: 'Structure' }, price: 15000, quantity: 8, lowStockThreshold: 3, serialNumber: 'CF-500-001', manufacturer: 'BeRAM' },
-  { id: '6', name: 'Telemetry Radio 915MHz', sku: 'COM-TLM-915', category: { name: 'Communications' }, price: 5600, quantity: 0, lowStockThreshold: 4, serialNumber: null, manufacturer: 'RFD' },
-  { id: '7', name: 'Precision UAV Alpha-7', sku: 'UAV-ALP-007', category: { name: 'Finished UAVs' }, price: 285000, quantity: 2, lowStockThreshold: 1, serialNumber: 'ALP-007-SN001', manufacturer: 'BeRAM' },
-]
-
-const MOCK_CATEGORIES = ['All', 'Avionics', 'Power Systems', 'Structure', 'Communications', 'Finished UAVs']
 
 const getStatus = (qty, threshold) => {
   if (qty === 0) return 'out'
@@ -35,7 +24,11 @@ const StatusBadge = ({ qty, threshold }) => {
 }
 
 export default function Inventory() {
-  const [products, setProducts] = useState(MOCK_PRODUCTS)
+  const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [saving, setSaving] = useState(false)
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
@@ -44,6 +37,22 @@ export default function Inventory() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [editProduct, setEditProduct] = useState(null)
+
+  // Pull this user's products + categories from the backend.
+  const load = async () => {
+    try {
+      setError('')
+      const [prods, cats] = await Promise.all([api.get('/products'), api.get('/categories')])
+      setProducts(prods || [])
+      setCategories(cats || [])
+    } catch (err) {
+      setError(err.message || 'Failed to load inventory')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [])
 
   const filtered = products.filter(p => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.sku.toLowerCase().includes(search.toLowerCase())
@@ -56,7 +65,55 @@ export default function Inventory() {
     return matchSearch && matchCat && matchStatus
   })
 
+  // Create or update a product, then refresh from the server.
+  const handleSaveProduct = async (form) => {
+    setSaving(true)
+    try {
+      const payload = {
+        name: form.name,
+        sku: form.sku,
+        categoryId: form.categoryId,
+        price: Number(form.price),
+        quantity: Number(form.quantity),
+        lowStockThreshold: Number(form.lowStockThreshold),
+        serialNumber: form.serialNumber || null,
+        manufacturer: form.manufacturer || null,
+      }
+      if (editProduct) await api.put(`/products/${editProduct.id}`, payload)
+      else await api.post('/products', payload)
+      setShowAddModal(false)
+      await load()
+    } catch (err) {
+      alert(err.message || 'Save failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleStock = async (id, type, qty, reason) => {
+    try {
+      await api.post('/movements', { productId: id, type, quantity: qty, reason })
+      setShowStockModal(false)
+      await load()
+    } catch (err) {
+      alert(err.message || 'Stock update failed')
+    }
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`/products/${id}`)
+      setShowDeleteModal(false)
+      await load()
+    } catch (err) {
+      alert(err.message || 'Delete failed')
+    }
+  }
+
   const selectClass = "bg-surface-container border border-outline-variant text-on-surface font-body-base text-[13px] px-3 py-2 rounded outline-none focus:border-tertiary transition-colors"
+
+  if (loading) return <div className="text-on-surface-variant font-data-mono text-[13px] py-20 text-center">Loading inventory…</div>
+  if (error) return <div className="text-red-400 font-data-mono text-[13px] py-20 text-center">{error}</div>
 
   return (
     <div>
@@ -91,7 +148,8 @@ export default function Inventory() {
             className="w-full bg-surface-container border border-outline-variant text-on-surface font-data-mono text-[13px] pl-10 pr-4 py-2 rounded outline-none focus:border-tertiary transition-colors" />
         </div>
         <select value={categoryFilter} onChange={e => setCategoryFilter(e.target.value)} className={selectClass}>
-          {MOCK_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+          <option value="All">All Categories</option>
+          {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
         </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className={selectClass}>
           <option value="All">All Status</option>
@@ -157,27 +215,23 @@ export default function Inventory() {
       </div>
 
       {/* Modals */}
-      {showAddModal && <ProductModal product={editProduct} onClose={() => setShowAddModal(false)} onSave={(p) => {
-        if (editProduct) setProducts(products.map(x => x.id === p.id ? p : x))
-        else setProducts([...products, { ...p, id: String(Date.now()), category: { name: p.categoryName } }])
-        setShowAddModal(false)
-      }} />}
-      {showStockModal && <StockModal product={selectedProduct} onClose={() => setShowStockModal(false)} onSave={(id, type, qty) => {
-        setProducts(products.map(p => p.id === id ? { ...p, quantity: type === 'IN' ? p.quantity + qty : Math.max(0, p.quantity - qty) } : p))
-        setShowStockModal(false)
-      }} />}
-      {showDeleteModal && <DeleteModal product={selectedProduct} onClose={() => setShowDeleteModal(false)} onConfirm={(id) => {
-        setProducts(products.filter(p => p.id !== id))
-        setShowDeleteModal(false)
-      }} />}
+      {showAddModal && <ProductModal product={editProduct} categories={categories} saving={saving} onClose={() => setShowAddModal(false)} onSave={handleSaveProduct} />}
+      {showStockModal && <StockModal product={selectedProduct} onClose={() => setShowStockModal(false)} onSave={handleStock} />}
+      {showDeleteModal && <DeleteModal product={selectedProduct} onClose={() => setShowDeleteModal(false)} onConfirm={handleDelete} />}
     </div>
   )
 }
 
-function ProductModal({ product, onClose, onSave }) {
-  const [form, setForm] = useState(product ? { ...product, categoryName: product.category.name } : { name: '', sku: '', categoryName: '', price: '', quantity: '', lowStockThreshold: '', serialNumber: '', manufacturer: '' })
+function ProductModal({ product, categories, saving, onClose, onSave }) {
+  const [form, setForm] = useState(
+    product
+      ? { name: product.name, sku: product.sku, categoryId: product.categoryId, price: product.price, quantity: product.quantity, lowStockThreshold: product.lowStockThreshold, serialNumber: product.serialNumber || '', manufacturer: product.manufacturer || '' }
+      : { name: '', sku: '', categoryId: categories[0]?.id || '', price: '', quantity: '', lowStockThreshold: '', serialNumber: '', manufacturer: '' }
+  )
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
   const inputClass = "w-full bg-surface-container-lowest border-b-2 border-outline-variant focus:border-tertiary text-on-surface font-data-mono text-[13px] py-2.5 px-2 outline-none transition-all rounded-none"
+
+  const fields = [['name', 'Asset Name', 'text'], ['sku', 'SKU', 'text'], ['manufacturer', 'Manufacturer', 'text'], ['price', 'Price (₹)', 'number'], ['quantity', 'Quantity', 'number'], ['lowStockThreshold', 'Low Stock Threshold', 'number'], ['serialNumber', 'Serial Number (optional)', 'text']]
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -189,17 +243,25 @@ function ProductModal({ product, onClose, onSave }) {
           </button>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {[['name', 'Asset Name', 'text'], ['sku', 'SKU', 'text'], ['categoryName', 'Category', 'text'], ['manufacturer', 'Manufacturer', 'text'], ['price', 'Price (₹)', 'number'], ['quantity', 'Quantity', 'number'], ['lowStockThreshold', 'Low Stock Threshold', 'number'], ['serialNumber', 'Serial Number (optional)', 'text']].map(([name, label, type]) => (
+          {/* Category dropdown (real category ids from the backend) */}
+          <div className="space-y-1">
+            <label className="font-label-sm text-[11px] text-on-surface-variant uppercase">Category</label>
+            <select name="categoryId" value={form.categoryId} onChange={handleChange} className={inputClass}>
+              <option value="" disabled>Select category</option>
+              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          {fields.map(([name, label, type]) => (
             <div key={name} className="space-y-1">
               <label className="font-label-sm text-[11px] text-on-surface-variant uppercase">{label}</label>
-              <input name={name} type={type} value={form[name] || ''} onChange={handleChange} className={inputClass} />
+              <input name={name} type={type} value={form[name] ?? ''} onChange={handleChange} className={inputClass} />
             </div>
           ))}
         </div>
         <div className="flex gap-3 mt-6">
           <button onClick={onClose} className="flex-1 py-2.5 border border-outline-variant text-on-surface-variant hover:text-on-surface rounded font-label-sm text-[12px] uppercase transition-colors">Cancel</button>
-          <button onClick={() => onSave(form)} className="flex-1 py-2.5 bg-tertiary text-on-tertiary hover:bg-tertiary-fixed-dim rounded font-label-sm text-[12px] uppercase font-bold transition-all">
-            {product ? 'Save Changes' : 'Add Asset'}
+          <button disabled={saving} onClick={() => onSave(form)} className="flex-1 py-2.5 bg-tertiary text-on-tertiary hover:bg-tertiary-fixed-dim rounded font-label-sm text-[12px] uppercase font-bold transition-all disabled:opacity-60">
+            {saving ? 'Saving…' : product ? 'Save Changes' : 'Add Asset'}
           </button>
         </div>
       </div>
@@ -261,7 +323,12 @@ function StockModal({ product, onClose, onSave }) {
 
         <div className="flex gap-3">
           <button onClick={onClose} className="flex-1 py-2.5 border border-outline-variant text-on-surface-variant rounded font-label-sm text-[12px] uppercase transition-colors">Cancel</button>
-          <button onClick={() => onSave(product.id, type, parseInt(qty))}
+          <button onClick={() => {
+              const n = parseInt(qty)
+              if (!n || n < 1) return alert('Enter a valid quantity')
+              if (!reason.trim()) return alert('Please provide a reason')
+              onSave(product.id, type, n, reason.trim())
+            }}
             className={`flex-1 py-2.5 rounded font-label-sm text-[12px] uppercase font-bold transition-all
               ${type === 'IN' ? 'bg-green-400 text-black hover:bg-green-300' : 'bg-red-400 text-white hover:bg-red-300'}`}>
             Confirm {type === 'IN' ? '↑ Stock In' : '↓ Stock Out'}
