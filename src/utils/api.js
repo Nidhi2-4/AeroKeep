@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const getToken = () => localStorage.getItem('aerokeep_token')
 
@@ -8,11 +8,13 @@ const headers = () => ({
 })
 
 const handleResponse = async (res) => {
+  const data = await res.json()
   if (res.status === 401) {
     localStorage.removeItem('aerokeep_token')
+    localStorage.removeItem('aerokeep_user')
     window.location.href = '/login'
+    return
   }
-  const data = await res.json()
   if (!res.ok) throw new Error(data.message || 'Request failed')
   return data
 }

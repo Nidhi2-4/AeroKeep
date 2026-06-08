@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Outfit', sans-serif; background-color: #131314; color: #e5e2e2; }
 ::-webkit-scrollbar { width: 5px; }
