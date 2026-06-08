@@ -1,29 +1,25 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(localStorage.getItem('aerokeep_token'))
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-  // TEMPORARY - skip API check until backend is ready
-  if (token) {
-    const savedUser = { name: 'Test Operator', email: 'test@beram.aero', role: 'engineer' }
-    setUser(savedUser)
-  }
-  setLoading(false)
-}, [token])
+  const [token, setToken] = useState(() => localStorage.getItem('aerokeep_token'))
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('aerokeep_user')
+    return saved ? JSON.parse(saved) : null
+  })
+  const [loading] = useState(false)
 
   const login = (token, user) => {
     localStorage.setItem('aerokeep_token', token)
+    localStorage.setItem('aerokeep_user', JSON.stringify(user))
     setToken(token)
     setUser(user)
   }
 
   const logout = () => {
     localStorage.removeItem('aerokeep_token')
+    localStorage.removeItem('aerokeep_user')
     setToken(null)
     setUser(null)
   }
