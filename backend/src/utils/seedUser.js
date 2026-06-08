@@ -14,37 +14,43 @@ const SEED = [
 
 // Creates starter categories + products (+ an initial stock movement) for ONE user.
 // All rows are tagged with this user's id, so the data is private to that account.
+//
+// NOTE: intentionally NOT wrapped in prisma.$transaction(). Interactive transactions
+// require a single pinned connection, which the Supabase pooled (PgBouncer) connection
+// can't provide — that caused the seed to silently fail in production. Sequential
+// creates work fine over the pooler. A brand-new user has no existing rows, so there's
+// nothing to conflict with and atomicity isn't needed here.
 async function seedUserInventory(userId) {
   const categoryNames = [...new Set(SEED.map((s) => s.category))]
 
-  await prisma.$transaction(async (tx) => {
-    const catMap = {}
-    for (const name of categoryNames) {
-      const cat = await tx.category.create({ data: { name, userId } })
-      catMap[name] = cat.id
-    }
+  // 1) Categories — keep a name -> id map for linking products.
+  const catMap = {}
+  for (const name of categoryNames) {
+    const cat = await prisma.category.create({ data: { name, userId } })
+    catMap[name] = cat.id
+  }
 
-    for (const s of SEED) {
-      const product = await tx.product.create({
-        data: {
-          name: s.name,
-          sku: s.sku,
-          categoryId: catMap[s.category],
-          userId,
-          price: s.price,
-          quantity: s.quantity,
-          lowStockThreshold: s.lowStockThreshold,
-          serialNumber: s.serialNumber,
-          manufacturer: s.manufacturer,
-        },
+  // 2) Products + an initial "IN" stock movement for each.
+  for (const s of SEED) {
+    const product = await prisma.product.create({
+      data: {
+        name: s.name,
+        sku: s.sku,
+        categoryId: catMap[s.category],
+        userId,
+        price: s.price,
+        quantity: s.quantity,
+        lowStockThreshold: s.lowStockThreshold,
+        serialNumber: s.serialNumber,
+        manufacturer: s.manufacturer,
+      },
+    })
+    if (s.quantity > 0) {
+      await prisma.stockMovement.create({
+        data: { productId: product.id, type: 'IN', quantity: s.quantity, reason: 'Initial stock', userId },
       })
-      if (s.quantity > 0) {
-        await tx.stockMovement.create({
-          data: { productId: product.id, type: 'IN', quantity: s.quantity, reason: 'Initial stock', userId },
-        })
-      }
     }
-  })
+  }
 }
 
 module.exports = { seedUserInventory }
