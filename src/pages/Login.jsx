@@ -27,20 +27,7 @@ export default function Login() {
     }
   }
 
-  e.preventDefault()
-  setLoading(true)
-  setError('')
-  try {
-    // TEMPORARY - remove this when backend is ready
-    const fakeToken = 'temp_token_123'
-    const fakeUser = { name: 'Test Operator', email: email, role: 'engineer' }
-    login(fakeToken, fakeUser)
-    navigate('/')
-  } catch (err) {
-    setError(err.message || 'Authentication failed')
-  } finally {
-    setLoading(false)
-  }
+
 
   return (
     <div className="font-body-base text-on-background flex items-center justify-center min-h-screen relative overflow-hidden bg-background">
