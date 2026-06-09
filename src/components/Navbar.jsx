@@ -56,8 +56,11 @@ export default function Navbar() {
             <span className="material-symbols-outlined text-tertiary text-[18px]">account_circle</span>
             <span className="font-body-base text-[13px] text-on-surface truncate">{user?.name || 'Operator'}</span>
           </div>
-          <span className="font-label-sm text-[10px] uppercase tracking-widest px-2 py-0.5 bg-tertiary/10 text-tertiary border border-tertiary/20 rounded-full">
-            {user?.role || 'engineer'}
+          <span className={`font-label-sm text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full border
+            ${user?.role === 'admin' 
+            ? 'bg-amber-400/10 text-amber-400 border-amber-400/20' 
+            : 'bg-tertiary/10 text-tertiary border-tertiary/20'}`}>
+            {user?.role === 'admin' ? '⚡ ADMIN' : '🔧 ENGINEER'}
           </span>
         </div>
         <button onClick={handleLogout}
