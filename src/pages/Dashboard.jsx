@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../utils/api'
+import StockChart from '../components/StockChart'
 
 export default function Dashboard() {
   const [stats, setStats] = useState({ totalProducts: 0, totalValue: 0, lowStockCount: 0, categoryCount: 0 })
@@ -136,6 +137,8 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      <StockChart />
     </div>
   )
 }

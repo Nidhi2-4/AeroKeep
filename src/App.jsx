@@ -8,6 +8,7 @@ import Logs from './pages/Logs'
 import Categories from './pages/Categories'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
+import ProductDetail from './pages/ProductDetail'
 
 function ProtectedLayout({ children }) {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/inventory" element={<ProtectedLayout><Inventory /></ProtectedLayout>} />
         <Route path="/logs" element={<ProtectedLayout><Logs /></ProtectedLayout>} />
         <Route path="/categories" element={<ProtectedLayout><Categories /></ProtectedLayout>} />
+        <Route path="/inventory/product/:id" element={<ProtectedLayout><ProductDetail /></ProtectedLayout>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
 import { exportToCSV } from '../utils/csvExport'
+import { useAuth } from '../context/AuthContext'
+
 
 const getStatus = (qty, threshold) => {
   if (qty === 0) return 'out'
@@ -37,6 +40,8 @@ export default function Inventory() {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [editProduct, setEditProduct] = useState(null)
+  const navigate = useNavigate()
+  const { canDelete } = useAuth()
 
   // Pull this user's products + categories from the backend.
   const load = async () => {
@@ -173,9 +178,9 @@ export default function Inventory() {
             <tbody>
               {filtered.map(p => (
                 <tr key={p.id} className="border-b border-white/[0.03] hover:bg-tertiary/[0.03] transition-colors">
-                  <td className="px-5 py-3">
-                    <p className="font-body-base text-[14px] text-on-surface font-medium">{p.name}</p>
-                    {p.manufacturer && <p className="font-data-mono text-[11px] text-on-surface-variant">{p.manufacturer}</p>}
+                  <td className="px-5 py-3 cursor-pointer" onClick={() => navigate(`/inventory/product/${p.id}`)}>
+                     <p className="font-body-base text-[14px] text-on-surface font-medium hover:text-tertiary transition-colors">{p.name}</p>
+                      {p.manufacturer && <p className="font-data-mono text-[11px] text-on-surface-variant">{p.manufacturer}</p>}
                   </td>
                   <td className="px-5 py-3 font-data-mono text-[12px] text-on-surface-variant">{p.sku}</td>
                   <td className="px-5 py-3 font-body-base text-[13px] text-on-surface-variant">{p.category.name}</td>
@@ -198,10 +203,12 @@ export default function Inventory() {
                         className="p-1.5 text-on-surface-variant hover:text-tertiary hover:bg-tertiary/10 rounded transition-colors" title="Edit">
                         <span className="material-symbols-outlined text-[18px]">edit</span>
                       </button>
+                      {canDelete() && (
                       <button onClick={() => { setSelectedProduct(p); setShowDeleteModal(true) }}
-                        className="p-1.5 text-on-surface-variant hover:text-red-400 hover:bg-red-400/10 rounded transition-colors" title="Delete">
-                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                           className="p-1.5 text-on-surface-variant hover:text-red-400 hover:bg-red-400/10 rounded transition-colors" title="Delete">
+                           <span className="material-symbols-outlined text-[18px]">delete</span>
                       </button>
+                    )}
                     </div>
                   </td>
                 </tr>
