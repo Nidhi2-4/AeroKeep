@@ -22,6 +22,10 @@
 - 🗂️ Category Management
 - 🔍 Search & Filter (by name, SKU, category, stock status)
 - 📋 Stock Movement History Log
+- - 🔍 Product Detail Page (full info, stock history, audit trail, inventory value)
+- 📱 QR Code Labels (generate, copy URL, download PNG for each product)
+- 📊 Stock Distribution Charts (bar chart by category)
+- 🔐 Role Based Access Control (Admin vs Engineer permissions)
 - 📥 CSV Export
 - 📱 Responsive UI
 
