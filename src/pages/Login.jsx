@@ -21,7 +21,7 @@ export default function Login() {
       login(data.token, data.user)
       navigate('/')
     } catch (err) {
-      setError(err.message || 'Authentication failed')
+      setError(err.message || 'Invalid credentials. Please try again.')
     } finally {
       setLoading(false)
     }
